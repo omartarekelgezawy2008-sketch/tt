@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>الصوت للغة الإشارة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* === صفحة داكنة === */
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    direction: rtl;
+    background-color: #121212; /* خلفية داكنة */
+    color: #ffffff; /* لون النص أبيض */
+    margin: 0;
+    padding: 0;
+}
+
+/* === الحاوية الرئيسية === */
+.container {
+    margin: 20px auto;
+    background: #1e1e1e;
+    padding: 20px;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* === العنوان === */
+h2 {
+    color: #00bfff;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* === زر التسجيل === */
+button {
+    background: #00bfff;
+    color: #121212;
+    border: none;
+    padding: 18px 25px;
+    font-size: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 80px;
+    height: 80px;
+}
+
+button:hover {
+    background: #0099cc;
+    transform: scale(1.1);
+}
+
+button.recording {
+    background: #ff4444;
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* === مربع النص === */
+textarea {
+    width: 100%;
+    height: 150px;
+    margin-top: 20px;
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #121212;
+    color: #ffffff;
+    resize: none;
+    caret-color: #00bfff;
+}
+
+/* === Responsive adjustments === */
+@media (max-width: 400px) {
+    button {
+        width: 70px;
+        height: 70px;
+        font-size: 20px;
+    }
+    textarea {
+        height: 120px;
+        font-size: 16px;
+    }
+    h2 {
+        font-size: 20px;
+    }
+}
+
+/* إخفاء الفيديو */
+#signVideo {
+    display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎤 الصوت للغة الإشارة</h2>
+
+    <button id="recordBtn">🎙️</button>
+
+    <textarea id="result" placeholder="الكلام هيظهر هنا..."></textarea>
+</div>
+
+<script>
+// قاموس الفيديوهات للكلمات (مش هنعرض الفيديو دلوقتي)
+const signDictionary = {
+    "انا": "videos/ana.mp4",
+    "اسمي": "videos/asmi.mp4",
+    "انت": "videos/enta.mp4",
+    "عامل": "videos/amel.mp4",
+    "ايه": "videos/eh.mp4"
+};
+
+const recordBtn = document.getElementById("recordBtn");
+const result = document.getElementById("result");
+
+let recognition;
+let isRecording = false;
+
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = 'ar-EG';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = function(event) {
+        let text = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            text += event.results[i][0].transcript + ' ';
+        }
+        result.value = text.trim();
+    };
+
+    recognition.onend = function() {
+        if (isRecording) recognition.start();
+    };
+} else {
+    alert("المتصفح لا يدعم تحويل الصوت إلى نص");
+}
+
+// زر التسجيل
+recordBtn.onclick = function() {
+    if (!recognition) return;
+
+    if (!isRecording) {
+        recognition.start();
+        isRecording = true;
+        recordBtn.classList.add("recording");
+        recordBtn.textContent = "⏹️";
+    } else {
+        recognition.stop();
+        isRecording = false;
+        recordBtn.classList.remove("recording");
+        recordBtn.textContent = "🎙️";
+    }
+};
+</script>
+
+</body>
+</html>
