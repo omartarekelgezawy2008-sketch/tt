@@ -2,80 +2,181 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم - عقارات المتميزة</title>
+    <title>لوحة التحكم الكاملة - عقارات المتميزة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
-        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
-        .btn { width: 100%; padding: 10px; background: #1a2a6c; color: white; border: none; cursor: pointer; border-radius: 5px; }
-        .estate-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        body { font-family: 'Cairo', sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .form-group { margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; width: 100%; margin-top: 10px; }
+        .estate-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+        .delete-btn { background: #e74c3c; padding: 5px 10px; font-size: 12px; }
+        .login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: #0f172a; display:flex; justify-content:center; align-items:center; z-index:9999; }
+
+        @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    input,
+    select,
+    textarea,
+    .btn {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .estate-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .login-overlay div {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
     </style>
 </head>
 <body>
-    <div id="loginScreen" style="text-align:center; padding-top:50px;">
-        <h3>دخول الأدمن</h3>
-        <input type="password" id="pass" placeholder="كلمة السر" style="width:200px;">
-        <button onclick="login()" class="btn" style="width:200px;">دخول</button>
+
+<div class="login-overlay" id="loginScreen">
+    <div style="background:white; padding:40px; border-radius:12px; text-align:center; width: 300px;">
+        <h3>دخول الإدارة</h3>
+        <input type="password" id="pass" placeholder="كلمة السر">
+        <button onclick="login()" class="btn" style="background:#b8860b;">دخول</button>
+    </div>
+</div>
+
+<div class="container" id="mainContent" style="display:none;">
+    <h1 style="text-align:center; color:#1a2a6c;">لوحة الإدارة الشاملة</h1>
+    
+    <div style="background: #eef; padding: 20px; margin-bottom: 25px; border-radius: 8px;">
+        <label>تعديل رقم الواتساب العالمي للموقع:</label>
+        <input type="text" id="globalPhone" placeholder="أدخل الرقم (بدون صفر البداية)">
+        <button onclick="updatePhone()" class="btn" style="background:#27ae60;">حفظ الرقم الجديد</button>
     </div>
 
-    <div id="mainContent" class="container" style="display:none;">
-        <h3>تعديل رقم الهاتف</h3>
-        <input type="text" id="globalPhone" placeholder="رقم الواتساب">
-        <button onclick="updatePhone()" class="btn">حفظ الرقم</button>
-        <hr>
-        <h3>إضافة عقار جديد</h3>
-        <form id="estateForm">
-            <input type="text" id="title" placeholder="عنوان العقار" required>
-            <select id="governorate">
-                <option value="الجيزة" selected>الجيزة</option>
-                <option value="القاهرة">القاهرة</option>
-                <option value="الإسكندرية">الإسكندرية</option>
-                <!-- باقي المحافظات -->
-            </select>
-            <select id="purpose"><option value="للبيع">للبيع</option><option value="للإيجار">للإيجار</option></select>
-            <input type="text" id="price" placeholder="السعر" required>
-            <textarea id="description" placeholder="التفاصيل"></textarea>
-            <input type="file" id="imageFiles" multiple required>
-            <button type="submit" class="btn">نشر العقار</button>
-        </form>
-        <h3>العقارات الحالية</h3>
-        <div id="estatesList"></div>
-    </div>
+    <div class="grid">
+        <div>
+            <h3>إضافة عقار جديد</h3>
+            <form id="estateForm">
+                <input type="text" id="title" placeholder="عنوان العقار" required class="form-group">
+                <select id="governorate" class="form-group">
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الجيزة">الجيزة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                    <option value="الدقهلية">الدقهلية</option>
+                    <option value="البحر الأحمر">البحر الأحمر</option>
+                    <option value="البحيرة">البحيرة</option>
+                    <option value="الفيوم">الفيوم</option>
+                    <option value="الغربية">الغربية</option>
+                    <option value="الإسماعيلية">الإسماعيلية</option>
+                    <option value="المنوفية">المنوفية</option>
+                    <option value="المنيا">المنيا</option>
+                    <option value="القليوبية">القليوبية</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                    <option value="السويس">السويس</option>
+                    <option value="الشرقية">الشرقية</option>
+                    <option value="أسوان">أسوان</option>
+                    <option value="أسيوط">أسيوط</option>
+                    <option value="بني سويف">بني سويف</option>
+                    <option value="دمياط">دمياط</option>
+                    <option value="كفر الشيخ">كفر الشيخ</option>
+                    <option value="مطروح">مطروح</option>
+                    <option value="قنا">قنا</option>
+                    <option value="شمال سيناء">شمال سيناء</option>
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="جنوب سيناء">جنوب سيناء</option>
+                    <option value="الأقصر">الأقصر</option>
+                    <option value="بورسعيد">بورسعيد</option>
+                </select>
+                <select id="purpose" class="form-group">
+                    <option value="للبيع">للبيع</option>
+                    <option value="للإيجار">للإيجار</option>
+                </select>
+                <input type="text" id="price" placeholder="السعر" required class="form-group">
+                <textarea id="description" placeholder="التفاصيل" class="form-group"></textarea>
+                <input type="file" id="imageFiles" multiple required class="form-group">
+                <button type="submit" class="btn" style="background:#1a2a6c;">نشر العقار في الموقع</button>
+            </form>
+        </div>
 
-    <script>
-        let db;
-        function login() {
-            if(document.getElementById('pass').value === "2233") {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                firebase.initializeApp({databaseURL: "https://cort-6368a-default-rtdb.firebaseio.com"});
-                db = firebase.database();
-                renderList();
-            } else { alert("خطأ!"); }
-        }
-        function updatePhone() { db.ref('settings/globalPhone').set(document.getElementById('globalPhone').value); alert("تم الحفظ"); }
-        function renderList() {
-            db.ref('properties').on('value', snap => {
-                let html = '';
-                snap.forEach(c => html += `<div class="estate-item">${c.val().title} <button onclick="db.ref('properties/${c.key}').remove()">حذف</button></div>`);
-                document.getElementById('estatesList').innerHTML = html;
+        <div>
+            <h3>العقارات الحالية</h3>
+            <div id="estatesList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let db;
+    function login() {
+        if(document.getElementById('pass').value === "2233") {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            initApp();
+        } else { alert("كلمة سر خاطئة!"); }
+    }
+
+    function initApp() {
+        firebase.initializeApp({ databaseURL: "https://cort-6368a-default-rtdb.firebaseio.com" });
+        db = firebase.database();
+
+        db.ref('properties').on('value', snap => {
+            let html = '';
+            snap.forEach(child => {
+                html += `<div class="estate-item"><span>${child.val().title}</span> 
+                <button class="btn delete-btn" onclick="del('${child.key}')">حذف</button></div>`;
             });
-        }
-        document.getElementById('estateForm').addEventListener('submit', async(e) => {
-            e.preventDefault();
-            const imgs = [];
-            const files = document.getElementById('imageFiles').files;
-            for(let f of files) {
-                const reader = new FileReader();
-                reader.readAsDataURL(f);
-                imgs.push(await new Promise(r => reader.onload = () => r(reader.result)));
-            }
-            db.ref('properties').push({title: document.getElementById('title').value, governorate: document.getElementById('governorate').value, purpose: document.getElementById('purpose').value, price: document.getElementById('price').value, description: document.getElementById('description').value, images: imgs});
-            alert("تم النشر!");
+            document.getElementById('estatesList').innerHTML = html;
         });
-    </script>
+    }
+
+    function updatePhone() {
+        db.ref('settings/globalPhone').set(document.getElementById('globalPhone').value)
+        .then(() => alert("تم تحديث الرقم بنجاح"));
+    }
+
+    function del(key) { if(confirm("هل أنت متأكد؟")) db.ref('properties').child(key).remove(); }
+
+    document.getElementById('estateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const base64Images = [];
+        const files = document.getElementById('imageFiles').files;
+        for(let i=0; i < files.length; i++) {
+            const reader = new FileReader();
+            reader.readAsDataURL(files[i]);
+            base64Images.push(await new Promise(r => reader.onload = () => r(reader.result)));
+        }
+        db.ref('properties').push({
+            title: document.getElementById('title').value,
+            governorate: document.getElementById('governorate').value,
+            purpose: document.getElementById('purpose').value,
+            price: document.getElementById('price').value,
+            description: document.getElementById('description').value,
+            images: base64Images
+        }).then(() => { alert("تم النشر!"); document.getElementById('estateForm').reset(); });
+    });
+</script>
 </body>
 </html>
