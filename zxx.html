@@ -2,268 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم الأدمن - حماية بكلمة سر</title>
-    <!-- استدعاء مكتبة الفايربيس (نفس النسخة المستقرة في كودك) -->
+    <title>لوحة التحكم الشاملة - عقارات المتميزة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --navy: #1a2a6c;
-            --gold: #b8860b;
-            --bg: #f8f9fa;
-            --text: #2c3e50;
-        }
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            padding: 20px; 
-            color: var(--text); 
-        }
-        .container { 
-            max-width: 1100px; 
-            margin: auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-        }
-        h1, h2, h3 { text-align: center; color: var(--navy); }
-        h1 { font-weight: 700; margin-bottom: 10px; }
-        
-        .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; margin-top: 30px; }
-        .card { 
-            background: #fff; 
-            padding: 25px; 
-            border: 1px solid #eee; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--navy); }
-        input[type="text"], textarea, input[type="file"] { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 15px; 
-            font-family: 'Cairo', sans-serif;
-            transition: 0.3s;
-        }
-        input[type="text"]:focus, textarea:focus {
-            border-color: var(--gold);
-            outline: none;
-            box-shadow: 0 0 5px rgba(184, 134, 11, 0.2);
-        }
-
-        /* تنسيق قائمة العقارات الحالية */
-        .estate-box { 
-            padding: 15px; 
-            margin: 10px 0; 
-            background: #fdfdfd; 
-            border-right: 5px solid var(--gold); 
-            border-radius: 6px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            font-size: 12px;
-        }
-        .btn-delete:hover { background: #c0392b; }
-
-        .send-btn { 
-            width: 100%; 
-            background: linear-gradient(135deg, var(--navy), #2a3b8c); 
-            color: white; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 18px; 
-            font-weight: bold; 
-            font-family: 'Cairo', sans-serif;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(26, 42, 108, 0.2);
-        }
-        .send-btn:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 42, 108, 0.3);
-        }
-        
-        .selected-box { 
-            background: #fbf9f5; 
-            border: 2px dashed var(--gold); 
-        }
-        .status-msg { text-align: center; font-weight: bold; color: #27ae60; margin-top: 10px; display: none;}
-
-        /* شاشة تسجيل الدخول الفخمة */
-        .login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--navy); display:flex; justify-content:center; align-items:center; z-index:9999; }
-        .login-box { background:white; padding:40px; border-radius:16px; width:340px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 5px solid var(--gold); }
-        .login-box input { width: 100%; padding: 12px; margin-top: 15px; border: 1px solid #ddd; border-radius: 6px; text-align: center; font-size: 16px; }
-        .login-box button { background: var(--gold); color: white; border: none; padding: 12px; width: 100%; margin-top: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo', sans-serif; font-size: 16px; }
+        body { font-family: 'Cairo', sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .form-group { margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; width: 100%; margin-top: 10px; }
+        .estate-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+        .delete-btn { background: #e74c3c; padding: 5px 10px; font-size: 12px; }
+        .login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: #0f172a; display:flex; justify-content:center; align-items:center; z-index:9999; }
     </style>
 </head>
 <body>
 
-<!-- شاشة قفل الأدمن -->
 <div class="login-overlay" id="loginScreen">
-    <div class="login-box">
-        <h2 style="margin:0; color:var(--navy)">لوحة تحكم عقارات الجيزة 🦅</h2>
-        <p style="color:#666; font-size:14px;">برجاء إدخال كلمة السر للدخول وإضافة الشقق</p>
-        <input type="password" id="adminPasswordInput" placeholder="كلمة السر الخاصة بك">
-        <button onclick="checkAdminLogin()">دخول آمن</button>
+    <div style="background:white; padding:40px; border-radius:12px; text-align:center; width: 300px;">
+        <h3>دخول الإدارة</h3>
+        <input type="password" id="pass" placeholder="كلمة السر">
+        <button onclick="login()" class="btn" style="background:#b8860b;">دخول</button>
     </div>
 </div>
 
-<!-- المحتوى الرئيسي المعزول -->
-<div class="container" id="mainContent" style="display: none;">
-    <h1>لوحة إدارة العقارات الذكية 🏢</h1>
-    <p style="text-align:center; color:#7f8c8d; margin:0;">أضف شقق جديدة لتظهر للمستخدمين على الرابط فوراً</p>
-    <hr style="border: 0; height: 1px; background: #eee; margin: 20px 0;">
+<div class="container" id="mainContent" style="display:none;">
+    <h1 style="text-align:center; color:#1a2a6c;">لوحة الإدارة الشاملة</h1>
+    
+    <div style="background: #eef; padding: 20px; margin-bottom: 25px; border-radius: 8px;">
+        <label>تعديل رقم الواتساب العالمي للموقع:</label>
+        <input type="text" id="globalPhone" placeholder="أدخل الرقم هنا">
+        <button onclick="updatePhone()" class="btn" style="background:#27ae60;">حفظ الرقم الجديد</button>
+    </div>
 
     <div class="grid">
-        <!-- الخانة اليمنى: إضافة عقار -->
-        <div class="card selected-box">
-            <h3>✨ إضافة عقار جديد للنظام</h3>
+        <div>
+            <h3>إضافة عقار جديد</h3>
             <form id="estateForm">
-                <div class="form-group">
-                    <label>عنوان العقار (واضح ومختصر):</label>
-                    <input type="text" id="title" placeholder="مثال: شقة 150م في الدقي لقطة" required>
-                </div>
-                <div class="form-group">
-                    <label>السعر الإجمالي (جنيه):</label>
-                    <input type="text" id="price" placeholder="مثال: 3,200,000" required>
-                </div>
-                <div class="form-group">
-                    <label>تفاصيل الشقة بالكامل (الدور، الفيو، التشطيب، التقسيم):</label>
-                    <textarea id="description" rows="5" placeholder="اكتب كل التفاصيل التي يحتاجها الزبون هنا..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>اختر صور العقار من جهازك (من 1 إلى 5 صور):</label>
-                    <input type="file" id="imageFiles" accept="image/*" multiple required>
-                    <small style="color:#888; display:block; margin-top:5px;">يمكنك تحديد عدة صور معاً بالضغط المستمر على زر Ctrl أثناء الاختيار.</small>
-                </div>
-                <button type="submit" class="send-btn">🚀 نشر وتحديث موقع العملاء فوراً</button>
-                <div class="status-msg" id="statusMsg">✅ تم رفع العقار بنجاح وتحديث النظام التلقائي!</div>
+                <input type="text" id="title" placeholder="عنوان العقار" required class="form-group">
+                <select id="governorate" class="form-group">
+                    <option value="الجيزة" selected>الجيزة</option>
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                    <option value="الدقهلية">الدقهلية</option>
+                    <option value="البحر الأحمر">البحر الأحمر</option>
+                    <option value="البحيرة">البحيرة</option>
+                    <option value="الفيوم">الفيوم</option>
+                    <option value="الغربية">الغربية</option>
+                    <option value="الإسماعيلية">الإسماعيلية</option>
+                    <option value="المنوفية">المنوفية</option>
+                    <option value="المنيا">المنيا</option>
+                    <option value="القليوبية">القليوبية</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                    <option value="السويس">السويس</option>
+                    <option value="الشرقية">الشرقية</option>
+                    <option value="أسوان">أسوان</option>
+                    <option value="أسيوط">أسيوط</option>
+                    <option value="بني سويف">بني سويف</option>
+                    <option value="دمياط">دمياط</option>
+                    <option value="كفر الشيخ">كفر الشيخ</option>
+                    <option value="مطروح">مطروح</option>
+                    <option value="قنا">قنا</option>
+                    <option value="شمال سيناء">شمال سيناء</option>
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="جنوب سيناء">جنوب سيناء</option>
+                    <option value="الأقصر">الأقصر</option>
+                    <option value="بورسعيد">بورسعيد</option>
+                </select>
+                <select id="purpose" class="form-group">
+                    <option value="للبيع">للبيع</option>
+                    <option value="للإيجار">للإيجار</option>
+                </select>
+                <input type="text" id="price" placeholder="السعر" required class="form-group">
+                <textarea id="description" placeholder="التفاصيل" class="form-group"></textarea>
+                <input type="file" id="imageFiles" multiple required class="form-group">
+                <button type="submit" class="btn" style="background:#1a2a6c;">نشر العقار</button>
             </form>
         </div>
 
-        <!-- الخانة اليسرى: التحكم ومسح المباع -->
-        <div class="card">
-            <h3>📋 العقارات المعروضة حالياً بالسيستم</h3>
-            <p style="color:#666; font-size:13px; text-align:center;">الشقة التي يتم حذفها من هنا تختفي فوراً من عند الزوار</p>
-            <div id="currentEstates" style="max-height: 500px; overflow-y: auto; padding: 5px;">جاري تحميل عقاراتك...</div>
+        <div>
+            <h3>العقارات الحالية على السيرفر</h3>
+            <div id="estatesList"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // الحفاظ على كلمة السر التي حددتها أنت في نظامك السابق
-    function checkAdminLogin() {
-        const pass = document.getElementById('adminPasswordInput').value;
-        if(pass === "2233") {
+    let db;
+    function login() {
+        if(document.getElementById('pass').value === "2233") {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
-            initFirebaseConnection();
-        } else {
-            alert("كلمة السر خاطئة! حاول مجدداً.");
-        }
+            initApp();
+        } else { alert("كلمة السر خاطئة!"); }
     }
 
-    let database;
+    function initApp() {
+        firebase.initializeApp({ databaseURL: "https://cort-6368a-default-rtdb.firebaseio.com" });
+        db = firebase.database();
 
-    function initFirebaseConnection() {
-        // الاتصال بقاعدة بيانات الفايربيس الخاصة بك المأخوذة من كودك الأصلي
-        const firebaseConfig = { databaseURL: "https://cort-6368a-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
-
-        // الاستماع المستمر وجلب العقارات المعروضة لمراقبتها وحذفها
-        database.ref('properties').on('value', (snapshot) => {
+        db.ref('properties').on('value', snap => {
             let html = '';
-            snapshot.forEach((childSnapshot) => {
-                const data = childSnapshot.val();
-                const key = childSnapshot.key;
-                html += `
-                    <div class="estate-box">
-                        <div>
-                            <strong style="color:var(--navy);">${data.title}</strong>
-                            <div style="font-size:13px; color:#e74c3c;">${data.price} ج.م</div>
-                        </div>
-                        <button class="btn-delete" onclick="deleteProperty('${key}')">حذف 🗑️</button>
-                    </div>
-                `;
+            snap.forEach(child => {
+                html += `<div class="estate-item"><span>${child.val().title}</span> 
+                <button class="btn delete-btn" onclick="del('${child.key}')">حذف</button></div>`;
             });
-            document.getElementById('currentEstates').innerHTML = html || 'لا توجد عقارات معروضة بالسيستم حالياً.';
+            document.getElementById('estatesList').innerHTML = html;
         });
     }
 
-    // معالجة رفع الفورم وتحويل الصور لـ Base64
-    document.getElementById('estateForm').addEventListener('submit', async function(e) {
+    function updatePhone() {
+        db.ref('settings/globalPhone').set(document.getElementById('globalPhone').value)
+        .then(() => alert("تم تحديث الرقم بنجاح"));
+    }
+
+    function del(key) { if(confirm("هل أنت متأكد من الحذف؟")) db.ref('properties').child(key).remove(); }
+
+    document.getElementById('estateForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const title = document.getElementById('title').value;
-        const price = document.getElementById('price').value;
-        const description = document.getElementById('description').value;
-        const fileInput = document.getElementById('imageFiles');
-
-        if(fileInput.files.length > 5) {
-            alert("أقصى عدد مسموح به هو 5 صور فقط للشقة الواحدة!");
-            return;
-        }
-
-        // تحويل مصفوفة الصور بالكامل لنصوص مشفرة لحفظها في الـ Realtime Database
         const base64Images = [];
-        for(let i=0; i < fileInput.files.length; i++) {
-            const str = await convertFileToBase64(fileInput.files[i]);
-            base64Images.push(str);
-        }
-
-        // دفع البيانات للفايربيس
-        database.ref('properties').push({
-            title: title,
-            price: price,
-            description: description,
-            images: base64Images,
-            timestamp: Date.now()
-        }).then(() => {
-            document.getElementById('estateForm').reset();
-            const msg = document.getElementById('statusMsg');
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 4000);
-        }).catch((err) => {
-            alert("حدث خطأ أثناء الرفع: " + err.message);
-        });
-    });
-
-    function convertFileToBase64(file) {
-        return new Promise((resolve, reject) => {
+        const files = document.getElementById('imageFiles').files;
+        for(let i=0; i < files.length; i++) {
             const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    }
-
-    function deleteProperty(key) {
-        if(confirm("هل أنت متأكد من حذف هذا العقار بشكل نهائي؟")) {
-            database.ref('properties').child(key).remove();
+            reader.readAsDataURL(files[i]);
+            base64Images.push(await new Promise(r => reader.onload = () => r(reader.result)));
         }
-    }
+        db.ref('properties').push({
+            title: document.getElementById('title').value,
+            governorate: document.getElementById('governorate').value,
+            purpose: document.getElementById('purpose').value,
+            price: document.getElementById('price').value,
+            description: document.getElementById('description').value,
+            images: base64Images
+        }).then(() => { alert("تم النشر بنجاح!"); document.getElementById('estateForm').reset(); });
+    });
 </script>
 </body>
 </html>
